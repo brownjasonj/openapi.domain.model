@@ -1,0 +1,25 @@
+components:
+  schemas:
+    counterparty_address:
+      type: object
+      properties:
+        line1:
+          type: string
+          example: "123 Main Street"
+        city:
+          type: string
+          example: "South Park"
+        stateCode:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: 2 Letter State Code
+          enum:
+            - AL
+            - AZ
+            - AK
+            - AR
+            - CA
+        zipCode:
+          type: string
+          example: "91210"

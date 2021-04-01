@@ -1,0 +1,11 @@
+components:
+  schemas:
+    counterparty_name:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: "Kenny"
+        lastName:
+          type: string
+          example: "Doe"

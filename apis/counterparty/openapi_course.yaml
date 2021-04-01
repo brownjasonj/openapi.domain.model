@@ -1,0 +1,277 @@
+openapi: 3.0.3
+info:
+  version: 0.0.1
+  title: OpenAPI Course
+  description: 'Specificaiton for OpenAPI Course'
+servers:
+  - url: https://dev.example.com
+    description: Development Server
+  - url: https://qa.example.com
+    description: QA
+  - url: https://prod.example.com
+    description: Production
+paths:
+  /v1/customers:
+    summary: List Customers
+    description: Get a list of customers
+    get:
+      deprecated: false
+      parameters:
+        - $ref: "#/components/parameters/page_number_parameter"
+        - $ref: "#/components/parameters/page_size_paramater"
+
+      responses:
+        '200':
+          description: List of Customers
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/customer-paged-list"
+
+  /v1/customers/{customer_id}:
+    summary: Get a Customer by its id
+    description: Get a single Customer by its Id
+    get:
+      parameters:
+        - name: customer_id
+          in: path
+          description: Customer id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Found Customer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/customer"
+
+
+  /v1/beers:
+    get:
+      deprecated: false
+      parameters:
+        - $ref: "#/components/parameters/page_number_parameter"
+        - $ref: "#/components/parameters/page_size_paramater"
+      responses:
+        '404':
+          description: Resource not found
+        '200':
+          description: List of Beers available
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/beer-stock-paged-list"
+
+  /v1/beers/{beer_id}:
+    get:
+      parameters:
+        - name: beer_id
+          in: path
+          description: Beer Id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Found Beer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/beer-stock-item"
+
+  /v1/teas:
+    get:
+      deprecated: false
+      responses:
+        200:
+          description: List of Teas available
+
+components:
+  parameters:
+    page_number_parameter:
+      name: pageNumber
+      in: query
+      description: Page Number
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 1
+    page_size_paramater:
+      name: pageSize
+      in: query
+      description: Page Size
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 25
+
+  schemas:
+    address:
+      type: object
+      properties:
+        line1:
+          type: string
+          example: "123 Main Street"
+        city:
+          type: string
+          example: "South Park"
+        stateCode:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: 2 Letter State Code
+          enum:
+            - AL
+            - AZ
+            - AK
+            - AR
+            - CA
+        zipCode:
+          type: string
+          example: "91210"
+
+    customer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+          example: "Kenny"
+        lastName:
+          type: string
+          example: "Doe"
+        address:
+          $ref: "#/components/schemas/address"
+
+    customer-list:
+      type: array
+      description: List of Customers
+      items:
+        $ref: "#/components/schemas/customer"
+
+    customer-paged-list:
+      type: object
+      properties:
+        content:
+          $ref: "#/components/schemas/customer-list"
+      allOf:
+        - $ref: "#/components/schemas/paged_response"
+
+    beer-stock-list:
+      type: array
+      items:
+        $ref: '#/components/schemas/beer-stock-item'
+
+    beer-stock-paged-list:
+      type: object
+      properties:
+        content:
+          $ref: '#/components/schemas/beer-stock-list'
+      allOf:
+        - $ref: '#/components/schemas/paged_response'
+
+    beer-stock-item:
+      type: object
+      properties:
+        item:
+          $ref: "#/components/schemas/beer-kind"
+        upc:
+          type: string
+          format: "upc"
+        price:
+          description: price per case of 12 bottles
+          type: number
+        quantity:
+          description: Number of cases in stock
+          type: integer
+
+    beer-kind:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        style:
+          type: string
+          enum:
+            - ALE
+            - PALE_ALE
+            - IPA
+            - WHEAT
+            - LAGER
+        brewery:
+          $ref: "#/components/schemas/brewery"
+
+    brewery:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Sierra Nevada"
+        address:
+          $ref: "#/components/schemas/address"
+
+
+    paged_response:
+      type: object
+      properties:
+        pageable:
+          $ref: '#/components/schemas/paged_response_pageable'
+        totalPages:
+          type: integer
+          format: int32
+        last:
+          type: boolean
+        totalElements:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        number:
+          type: integer
+          format: int32
+        numberOfElements:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/paged_response_pageable_sort'
+        first:
+          type: boolean
+
+    paged_response_pageable_sort:
+      type: object
+      properties:
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+
+    paged_response_pageable:
+      type: object
+      properties:
+        sort:
+          $ref: '#/components/schemas/paged_response_pageable_sort'
+        offset:
+          type: integer
+          format: int32
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
