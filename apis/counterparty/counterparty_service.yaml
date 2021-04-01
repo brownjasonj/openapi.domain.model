@@ -84,7 +84,7 @@ components:
           type: string
           example: "Doe"
         address:
-          $ref: "https://github.com/brownjasonj/openapi.domain.model/schemas/counterparty/counterparty_address.yaml#/components/schemas/counterparty_address"
+          $ref: 'https://github.com/brownjasonj/openapi.domain.model/blob/master/schemas/counterparty/counterparty_address.yaml#/components/schemas/counterparty_address'
 
     customer-list:
       type: array
