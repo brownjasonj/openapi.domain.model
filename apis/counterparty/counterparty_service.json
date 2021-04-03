@@ -18,7 +18,7 @@
         "deprecated": false,
         "parameters": [
           {
-            "name": "customer_id",
+            "name": "counterparty_id",
             "in": "path",
             "description": "Customer Id",
             "required": true,
