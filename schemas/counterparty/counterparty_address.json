@@ -11,11 +11,27 @@
     }
   ],
   "paths": {
-    
+
   },
   "components": {
     "schemas": {
-
+      "counterparty": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "Kenny"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe"
+          }
+        }
+      }
     }
   }
 }
