@@ -12,14 +12,16 @@ servers:
     description: Production
 paths:
   /v1/customers:
-    summary: List Customers
-    description: Get a list of customers
     get:
+      summary: List Customers
+      description: Get a list of customers
+      tags:
+        - Customers
+      operationId: getAllCustomers
       deprecated: false
       parameters:
         - $ref: "#/components/parameters/page_number_parameter"
         - $ref: "#/components/parameters/page_size_paramater"
-
       responses:
         '200':
           description: List of Customers
@@ -27,19 +29,44 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/customer-paged-list"
+    post:
+      summary: New Customer
+      description: Create a new customer
+      tags:
+        - Customers
+      operationId: createCustomer
+      deprecated: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/customer"
+      responses:
+        '201':
+          description: Customer created successfully
+          headers:
+            location:
+              description: Location of the created customer
+              schema:
+                type: string
+                format: uri
+                example: http://example.com/v1/customers/{assignedIdValue}
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
 
   /v1/customers/{customer_id}:
-    summary: Get a Customer by its id
-    description: Get a single Customer by its Id
     get:
+      summary: Get a Customer by its id
+      description: Get a single Customer by its Id
+      tags:
+        - Customers
+      operationId: getCustomerById
+      deprecated: false
       parameters:
-        - name: customer_id
-          in: path
-          description: Customer id
-          required: true
-          schema:
-            type: string
-            format: uuid
+        - $ref: "#/components/parameters/customer_id_path_parameter"
       responses:
         '200':
           description: Found Customer
@@ -47,11 +74,113 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/customer"
+        '404':
+          description: Not found
+    put:
+      summary: Update Customer
+      description: Update customer by id
+      tags:
+        - Customers
+      operationId: updateCustomerById
+      deprecated: false
+      parameters:
+        - $ref: "#/components/parameters/customer_id_path_parameter"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/customer"
+      responses:
+        '204':
+          description: Customer updated
+        '404':
+          description: Not found
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
+
+    delete:
+      summary: Delete a Customer by its id
+      description: Delete a single Customer by its Id
+      tags:
+        - Customers
+      operationId: deleteCustomerById
+      deprecated: false
+      parameters:
+        - $ref: "#/components/parameters/customer_id_path_parameter"
+      responses:
+        '200':
+          description: Customer deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/customer"
+        '404':
+          description: Not found
+
+  /v1/customers/{customer_id}/orders:
+    post:
+      summary: Place Order
+      description: Place Order
+      tags:
+        - Order Service
+      operationId: orderBeerByCustomerId
+      deprecated: false
+      parameters:
+        - $ref: "#/components/parameters/customer_id_path_parameter"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/beer_order"
+      responses:
+        '201':
+          description: Order Created
+          headers:
+            Location:
+              description: Reference to created Order
+              schema:
+                type: string
+                format: uri
+                example: "http://example.com/v1/orders/{orderIdValue}"
+        '400':
+          description: Bad request
+        '409':
+          description: Conflict
+      callbacks:
+        orderstatuschange:
+          "${request.body#/orderstatuscallback}":
+            description: Webhook for order status change notification
+            post:
+              requestBody:
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        orderid:
+                          type: string
+                          format: uuid
+                        orderstatus:
+                          type: string
+                          enum:
+                            - Open
+                            - Processing
+                            - Complete
+              responses:
+                '200':
+                  description: Okay
 
 
   /v1/beers:
     get:
+      summary: List Beers
+      description: Get a list of beers in stock
       deprecated: false
+      tags:
+        - Beers
+      operationId: getAllBeers
       parameters:
         - $ref: "#/components/parameters/page_number_parameter"
         - $ref: "#/components/parameters/page_size_paramater"
@@ -64,20 +193,79 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/beer-stock-paged-list"
+    post:
+      summary: New Beer
+      description: Create a new beer
+      tags:
+        - Beers
+      operationId: createBeer
+      deprecated: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/beer-stock-item"
+      responses:
+        '201':
+          description: Beer stock item created successfully
+          headers:
+            location:
+              description: Location of the created beer item
+              schema:
+                type: string
+                format: uri
+                example: http://example.com/v1/beers/{assignedIdValue}
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
+
 
   /v1/beers/{beer_id}:
     get:
+      summary: Get Beer
+      description: Get a beer with the given id
+      tags:
+        - Beers
+      operationId: getBeerById
       parameters:
-        - name: beer_id
-          in: path
-          description: Beer Id
-          required: true
-          schema:
-            type: string
-            format: uuid
+        - $ref: "#/components/parameters/beer_id_path_parameter"
       responses:
         '200':
           description: Found Beer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/beer-stock-item"
+    put:
+      summary: Update Beer
+      description: Update Beer by id
+      tags:
+        - Beers
+      operationId: updateBeerById
+      deprecated: false
+      parameters:
+        - $ref: "#/components/parameters/beer_id_path_parameter"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/beer-stock-item"
+      responses:
+        '204':
+          description: Beer updated
+    delete:
+      summary: Delete Beer
+      description: Delete a beer with the given id
+      tags:
+        - Beers
+      operationId: deleteBeerById
+      parameters:
+        - $ref: "#/components/parameters/beer_id_path_parameter"
+      responses:
+        '200':
+          description: Beer deleted
           content:
             application/json:
               schema:
@@ -110,6 +298,23 @@ components:
         type: integer
         format: int32
         default: 25
+    customer_id_path_parameter:
+      name: customer_id
+      in: path
+      description: Customer id
+      required: true
+      schema:
+        type: string
+        format: uuid
+    beer_id_path_parameter:
+      name: beer_id
+      in: path
+      description: Beer Id
+      required: true
+      schema:
+        type: string
+        format: uuid
+
 
   schemas:
     address:
@@ -142,6 +347,7 @@ components:
         id:
           type: string
           format: uuid
+          readOnly: true
         firstName:
           type: string
           example: "Kenny"
@@ -199,6 +405,7 @@ components:
         id:
           type: string
           format: uuid
+          readOnly: true
         name:
           type: string
         style:
@@ -220,6 +427,52 @@ components:
           example: "Sierra Nevada"
         address:
           $ref: "#/components/schemas/address"
+
+
+    beer_order:
+      type: object
+      required:
+        - customerid
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        customerid:
+          type: string
+          format: uuid
+        customerref:
+          type: string
+          nullable: true
+        beerorderlines:
+          type: array
+          items:
+            $ref: "#/components/schemas/beer_order_line"
+        orderstatuscallback:
+          type: string
+          format: uri
+
+    beer_order_line:
+      type: object
+      required:
+        - upc
+        - orderquantity
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        beerid:
+          type: string
+          format: uuid
+          readOnly: true
+        upc:
+          type: string
+        orderquantity:
+          type: number
+          format: int32
 
 
     paged_response:

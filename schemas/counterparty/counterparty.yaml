@@ -1,0 +1,48 @@
+openapi: 3.0.3
+info:
+  title: Title
+  description: Title
+  version: 1.0.0
+servers:
+  - url: 'https'
+paths:
+components:
+  schemas:
+    customer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+          example: "Kenny"
+        lastName:
+          type: string
+          example: "Doe"
+        address:
+          $ref: "#/components/schemas/counterparty_address"
+
+    counterparty_address:
+      type: object
+      properties:
+        line1:
+          type: string
+          example: "123 Main Street"
+        city:
+          type: string
+          example: "South Park"
+        stateCode:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: 2 Letter State Code
+          enum:
+            - AL
+            - AZ
+            - AK
+            - AR
+            - CA
+        zipCode:
+          type: string
+          example: "91210"

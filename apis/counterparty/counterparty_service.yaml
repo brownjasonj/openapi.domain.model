@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   version: 0.0.1
   title: OpenAPI Course
-  description: 'Specificaiton for OpenAPI Course'
+  description: 'Specification for OpenAPI Course'
 servers:
   - url: https://dev.example.com
     description: Development Server
@@ -12,14 +12,13 @@ servers:
     description: Production
 paths:
   /v1/customers:
-    summary: List Customers
-    description: Get a list of customers
     get:
+      summary: List Customers
+      description: Get a list of customers
       deprecated: false
       parameters:
         - $ref: "#/components/parameters/page_number_parameter"
-        - $ref: "#/components/parameters/page_size_paramater"
-
+        - $ref: "#/components/parameters/page_size_parameter"
       responses:
         '200':
           description: List of Customers
@@ -29,9 +28,9 @@ paths:
                 $ref: "#/components/schemas/customer-paged-list"
 
   /v1/customers/{customer_id}:
-    summary: Get a Customer by its id
-    description: Get a single Customer by its Id
     get:
+      summary: Get a Customer by its id
+      description: Get a single Customer by its Id
       parameters:
         - name: customer_id
           in: path
@@ -59,7 +58,7 @@ components:
         type: integer
         format: int32
         default: 1
-    page_size_paramater:
+    page_size_parameter:
       name: pageSize
       in: query
       description: Page Size
@@ -70,7 +69,6 @@ components:
         default: 25
 
   schemas:
-
     customer:
       type: object
       properties:
@@ -84,7 +82,7 @@ components:
           type: string
           example: "Doe"
         address:
-          $ref: "https://github.com/brownjasonj/openapi.domain.model/blob/master/schemas/counterparty/counterparty_address.yaml#/components/schemas/counterparty_address"
+          $ref: "../../schemas/counterparty/counterparty_address.yaml#/components/schemas/counterparty_address"
 
     customer-list:
       type: array
