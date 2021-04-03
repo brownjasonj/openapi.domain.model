@@ -1,36 +1,18 @@
 {
-  "openapi": "3.0.3",
-  "info": {
-    "title": "Title",
-    "description": "Title",
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "https"
-    }
-  ],
-  "paths": {
-
-  },
-  "components": {
-    "schemas": {
-      "counterparty": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "firstName": {
-            "type": "string",
-            "example": "Kenny"
-          },
-          "lastName": {
-            "type": "string",
-            "example": "Doe"
-          }
-        }
+  "counterparty": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "format": "uuid"
+      },
+      "firstName": {
+        "type": "string",
+        "example": "Kenny"
+      },
+      "lastName": {
+        "type": "string",
+        "example": "Doe"
       }
     }
   }
