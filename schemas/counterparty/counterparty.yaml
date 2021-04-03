@@ -6,6 +6,26 @@ info:
 servers:
   - url: 'https'
 paths:
+  /v1/customers/{customer_id}:
+    get:
+      summary: Get a Customer by its id
+      description: Get a single Customer by its Id
+      parameters:
+        - name: customer_id
+          in: path
+          description: Customer id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Found Customer
+          content:
+            application/json:
+              schema:
+                $ref: "https://github.com/brownjasonj/openapi.domain.model/blob/master/schemas/counterparty/counterparty.yaml#/components/schemas/customer"
+
 components:
   schemas:
     customer:
